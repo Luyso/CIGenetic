@@ -7,7 +7,7 @@ i=1;
 
 
 %% Risk Caution MLP %%
- 
+
 R1L1 = xlsread('neural_data.xlsx','R32:R101');
 R1L2 = xlsread('neural_data.xlsx','V32:V101');
 R1L3 = xlsread('neural_data.xlsx','Z32:Z101');
@@ -105,12 +105,18 @@ iterations = 10;
 MLP1Net = generate_mlp(inputsMLP1,targetsMLP1,n);
 
 %% new trained net
-Pertubed_inputs = [INCPertNewFs(:,1),NewF2,NewF3,NewF4];
+Perturbed_inputs = [INCPertNewFs(:,1),NewF2,NewF3,NewF4];
+Union1 = [Perturbed_inputs' gen_factors'];
+Union1 = Union1';
 %%
-for i=1:50
-outputsnew(i,1:4) = mpl_gp.net(Pertubed_inputs(i,:));
+for i=1:120
+outputsnew(i,1:4) = mpl_gp.net(Union1(i,:));
 end
-outputsnew = [outputsnew NewF5 NewF6];
+F5 = [NewF5' C1F1'];
+F5 = F5';
+F6 = [NewF6' C1F2'];
+F6 = F6';
+outputsnew = [outputsnew F5 F6];
 %%
 newdata= [gen_factors C1F1 C1F2];
 semifinal = [outputsnew' newdata'];
