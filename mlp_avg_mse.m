@@ -17,8 +17,6 @@ for i = 1:trials
                 % Training della rete
                 [net,tr] = train(net,inputs,targets);
                 
-               
-
                 % Test
                 outputs = net(inputs);
                

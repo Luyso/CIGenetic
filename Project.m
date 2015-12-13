@@ -116,21 +116,15 @@ F5 = [NewF5' C1F1'];
 F5 = F5';
 F6 = [NewF6' C1F2'];
 F6 = F6';
-outputsnew = [outputsnew F5 F6];
+outputsnew = [outputsnew F5 F6]; % 120x4 U 120x2
 %%
-newdata= [gen_factors C1F1 C1F2];
-semifinal = [outputsnew' newdata'];
-semifinal = semifinal';
+oldData= [gen_factors C1F1 C1F2];
+semifinal = [outputsnew' oldData'];
+semifinal = semifinal'; % 120x6 
 %%
 for i=1:120
 finalOut(i,1:6) = MLP1Net(semifinal(i,:));
 end
-%%
-ok = [gen_factors' Pertubed_inputs'];
-ok = ok';
-
-newmlp = getBest();
-[Gp_New_Net] = train(mpl_gp.net,ok);
 
 %% RBF1 %%
 %%%%%%%%%%
