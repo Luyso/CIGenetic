@@ -34,7 +34,7 @@ targetsANFIS2 = targetsMLP2;
 
 %%
 
-%% Populate chromosomes
+%% Generate chromosomes
 max_n = 15;
 min_n = 6;
 m = 1;
