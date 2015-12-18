@@ -293,10 +293,10 @@ Chromo{1,2} = MLP1Net; % generateMLP
 Chromo{1,3} = RBF1Net; % generateRBF
 Chromo{1,4} = ANFIS1Net; %generateANFIS
 Chromo{1,5} = randi([1,3],1,1);
-Chromo{1,6} = generateMLP2Net; % generateMLP
-Chromo{1,7} = generateRBF2Net; % generateRBF
+Chromo{1,6} = MLP2Net; % generateMLP
+Chromo{1,7} = RBF2Net; % generateRBF
 Chromo{1,8} = ANFIS2Net; %generateANFIS
-
+%%
 % Parameter for each function:
 neurons = randi([MinNeurons,MaxNeurons],1,1); % Number of neurons for MLP
 spread = rand(); % Spread value for RBF
