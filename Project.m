@@ -151,8 +151,14 @@ NumEpochs = 20;
 InputFismat = genfis1(TrainData, NumMfs, MfType);
 [ANFIS1,MseAnfis1] = anfis(TrainData, InputFismat, NumEpochs);
 MinMSEAnfis1 = min(MseAnfis1);
-
-
+%%
+outputsANFIS1new = mpl_gp.net(Union1');
+F5 = [NewF5' C1F1'];
+F5 = F5';
+F6 = [NewF6' C1F2'];
+F6 = F6';
+outputsANFIS1new = [outputsANFIS1new' F5 F6]; % 120x1 U 120x2
+NewTargetsANFIS1 = evalfis(outputsANFIS1new',ANFIS1);
 
 %%
                               %%%%%%%%%%%%%%%%%%
