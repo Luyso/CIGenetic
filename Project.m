@@ -1,306 +1,93 @@
+%%function output = perturb(input,max_range,min_range)
+% Load data
 filename = 'neural_data.xlsx';
-gen_factors =  xlsread(filename, 'D31:G101');
-gen_perc = xlsread(filename,  'I32:I101');
-i=1;
 
-%%
+NewF1 =  xlsread(filename, 'D32:D81');
+NewF2 =  xlsread(filename, 'E32:E81');
+NewF3 =  xlsread(filename, 'F32:F81');
+NewF4 =  xlsread(filename, 'G32:G81');
+NewF5 =  xlsread(filename, 'K32:K81');
+NewF6 =  xlsread(filename, 'L32:L81');
 
-
-%% Risk Caution MLP %%
-
-R1L1 = xlsread('neural_data.xlsx','R32:R101');
-R1L2 = xlsread('neural_data.xlsx','V32:V101');
-R1L3 = xlsread('neural_data.xlsx','Z32:Z101');
-R1T = xlsread('neural_data.xlsx','AA32:AA101');
- 
-R2L1 = xlsread('neural_data.xlsx','AE32:AE101');
-R2L2 = xlsread('neural_data.xlsx','AI32:AI101');
-R2L3 = xlsread('neural_data.xlsx','AL32:AL101');
-R2T = xlsread('neural_data.xlsx','AM32:AM101');
-
-R3L1 = xlsread('neural_data.xlsx','AQ32:AQ101');
-R3L2 = xlsread('neural_data.xlsx','AU32:AU101');
-R3L3 = xlsread('neural_data.xlsx','AX32:AX101');
-R3T = xlsread('neural_data.xlsx','AY32:AY101');
- 
-R1Input = [R1L1, R1L2, R1L3];
-R2Input = [R2L1, R2L2, R2L3];
-R3Input = [R3L1, R3L2, R3L3];
- 
-%%
-                                %%%%%%%%%%%%%%%%
-                             %%%%    GP MLP    %%%%
-                                %%%%%%%%%%%%%%%%
-
- 
-%% GP MLP
-max_n =15;
-min_n = 6;
-mpl_gp = getBest(gen_factors,gen_perc,max_n, min_n)
-
-close all
-
-                            %%%%%%%%%%%%%%%%
-                         %%%%  RISK 1 MLP  %%%%
-                            %%%%%%%%%%%%%%%%
-%%
-mpl_r1 = getBest(R1Input,R1T,max_n, min_n)
- 
+NewFs = [NewF1, NewF2, NewF3, NewF4];
 
 
-    
-%% 
-                            %%%%%%%%%%%%%%%%
-                         %%%%  RISK 2 MLP  %%%%
-                            %%%%%%%%%%%%%%%%
 
-mpl_r2 = getBest(R2Input,R2T,max_n, min_n)
-%% 
-                            %%%%%%%%%%%%%%%%
-                         %%%%  RISK 3 MLP  %%%%
-                            %%%%%%%%%%%%%%%%
+%% Generate new data with a certain perturbation
 
-mpl_r3 = getBest(R3Input,R3T,max_n, min_n)
-%%   
+INCpert = 1 + (1.1-1).*rand(50,4); % Max 10% of perturbation
+DECPert = 0.9 + (1-0.90).*rand(50,4); % Max 20% of perturbation
+
+INCPertNewFs = INCpert.*NewFs;
+DECPertNewFs = DECPert.*NewFs;
+
+% Check any value exceeds the range [0,1]
+for i = 1:4
+    for j = 1:50
+    if (INCPertNewFs(j,i) > 1), INCPertNewFs(j,i)=1; end
+    end
+end
   
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                                                                         %
-%             Part II - Design of the Classifiers C1 & C2                 %           
-%                                                                         %
-%  Each classifier x is composed by three systems: MLPx, RBFx and ANFISx  %
-%                                                                         %
-%              Training the Systems: Step one - Supervised data           %
-%                                                                         %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+for i = 1:4
+    for j = 1:50
+    if (DECPertNewFs(j,i) > 1), DECPertNewFs(j,i)=1; end
+    end
+end
+    
+%% Plot results F1 and F4 %%
 
-                              %%%%%%%%%%%%%%%%%%
-                           %%%%% CLASSIFIER 1 %%%%%
-                              %%%%%%%%%%%%%%%%%%
-
-% Classifier 1 inputs
-C1F1 = xlsread('neural_data.xlsx','K32:K101');
-C1F2 = xlsread('neural_data.xlsx','L32:L101');
-C1GP = xlsread('neural_data.xlsx','I32:I101');
-C1F1T = C1F1';
-C1F2T = C1F2';
-C1GPT = C1GP';
-inputsRBF1 = [C1F1T; C1F2T; C1GPT];
-inputsMLP1 = [C1F1, C1F2, C1GP];
-inputsANFIS1 = [C1F1 C1F2 C1GP];
-% Classifier 1 targets
-targetsRBF1 = xlsread('neural_data.xlsx','N32:N101');
-targetsRBF1 = targetsRBF1';
-targetsMLP1 = xlsread('neural_data.xlsx','N32:N101');
-targetsANFIS1 = xlsread('neural_data.xlsx','N32:N101');
-
-
-
-%% MLP1 %%
-%%%%%%%%%%
-
-n = randi([min_n,max_n],1,1);
-iterations = 10;
-MLP1Net = generate_mlp(inputsMLP1,targetsMLP1,n);
+% Max 10% disturbance
 close all
+subplot(2,2,1), plot(NewF1,NewF4,'+'), title('F1 VS F4');
+subplot(2,2,2), plot(INCPertNewFs(:,1),NewF4,'+'), title('PertF1 VS F4');
+subplot(2,2,3), plot(NewF1,INCPertNewFs(:,4),'+'), title('F1 VS PertF4');
+subplot(2,2,4), plot(INCPertNewFs(:,1),INCPertNewFs(:,4),'+'), title('PertF1 VS PertF4');
 
-%% new trained net
-Perturbed_inputs = [INCPertNewFs(:,1),NewF2,NewF3,NewF4];
-Union1 = [Perturbed_inputs' gen_factors'];
-Union1 = Union1'; % 120x4
+% Max 20% disturbance
+figure
+subplot(2,2,1), plot(NewF1,NewF4,'o'), title('F1 VS F4');
+subplot(2,2,2), plot(DECPertNewFs(:,1),NewF4,'o'), title('PertF1 VS F4');
+subplot(2,2,3), plot(NewF1,DECPertNewFs(:,4),'o'), title('F1 VS PertF4');
+subplot(2,2,4), plot(DECPertNewFs(:,1),DECPertNewFs(:,4),'o'), title('PertF1 VS PertF4');
+
+std(NewF1)
+std(INCPertNewFs(:,1))
+std(NewF4)
+std(INCPertNewFs(:,4))
+
+%% Plot results F2 and F3 %%
+% Max 10% disturbance
+close all
+subplot(2,2,1), plot(NewF2,NewF3,'+'), title('F2 VS F3');
+subplot(2,2,2), plot(INCPertNewFs(:,2),NewF3,'+'), title('PertF2 VS F3');
+subplot(2,2,3), plot(NewF2,INCPertNewFs(:,3),'+'), title('F2 VS PertF3');
+subplot(2,2,4), plot(INCPertNewFs(:,2),INCPertNewFs(:,3),'+'), title('PertF2 VS PertF3');
+
+% Max 20% disturbance
+figure
+subplot(2,2,1), plot(NewF2,NewF3,'o'), title('F2 VS F3');
+subplot(2,2,2), plot(DECPertNewFs(:,2),NewF3,'o'), title('PertF2 VS F3');
+subplot(2,2,3), plot(NewF2,DECPertNewFs(:,3),'o'), title('F2 VS PertF3');
+subplot(2,2,4), plot(DECPertNewFs(:,2),DECPertNewFs(:,3),'o'), title('PertF2 VS PertF3');
 %%
+%Risk Input Perturbation
+R1L1New = xlsread('neural_data.xlsx','R32:R81');
+R1L2New = xlsread('neural_data.xlsx','V32:V81');
+R1L3New = xlsread('neural_data.xlsx','Z32:Z81');
 
-outputsMLP1new = mpl_gp.net(Union1'); % 1x120
+R2L1New = xlsread('neural_data.xlsx','AE32:AE81');
+R2L2New = xlsread('neural_data.xlsx','AI32:AI81');
+R2L3New = xlsread('neural_data.xlsx','AL32:AL81');
 
-F5 = [NewF5' C1F1'];
-F5 = F5';
-F6 = [NewF6' C1F2'];
-F6 = F6';
-outputsMLP1new = [outputsMLP1new' F5 F6]; % 120x1 U 120x2
-NewTargetMLP1 = MLP1Net(outputsMLP1new'); % 1x120
-
-
-%% RBF1 %%
-%%%%%%%%%%
-
-MaxNeurons = 50;
-Spread = 0.5;
-RBF1Net = GenerateRBF(inputsRBF1,targetsRBF1,MaxNeurons,Spread);
-
-%% Unsupervised data
-
-outputsRBF1new = mpl_gp.net(Union1'); % 1x120
-F5 = [NewF5' C1F1'];
-F5 = F5';
-F6 = [NewF6' C1F2'];
-F6 = F6';
-outputsRBF1new = [outputsRBF1new' F5 F6]; % 120x1 U 120x2
-NewTargetRBF1 = RBF1Net(outputsRBF1new'); % 1x120
-%%
-
-%% ANFIS 1 %%
-%%%%%%%%%%%%%
-
-% Classifier 1 output
-
-TrainData = [inputsANFIS1 targetsANFIS1];
-NumMfs = 5;
-MfType = 'gbellmf';
-NumEpochs = 20;
-InputFismat = genfis1(TrainData, NumMfs, MfType);
-[ANFIS1,MseAnfis1] = anfis(TrainData, InputFismat, NumEpochs);
-MinMSEAnfis1 = min(MseAnfis1);
+R3L1New = xlsread('neural_data.xlsx','AQ32:AQ81');
+R3L2New = xlsread('neural_data.xlsx','AU32:AU81');
+R3L3New = xlsread('neural_data.xlsx','AX32:AX81');
 
 
-
-%%
-                              %%%%%%%%%%%%%%%%%%
-                           %%%%% CLASSIFIER 2 %%%%%
-                              %%%%%%%%%%%%%%%%%%
-% Classifier 2 inputs
-C2IR1 = xlsread('neural_data.xlsx','AA32:AA101'); % CLASSIFIER 2 INPUT RISK 1
-C2IR2 = xlsread('neural_data.xlsx','AM32:AM101'); % CLASSIFIER 2 INPUT RISK 2
-C2IR3 = xlsread('neural_data.xlsx','AY32:AY101'); % CLASSIFIER 2 INPUT RISK 3
-C2IR1t = C2IR1';
-C2IR2t = C2IR2';
-C2IR3t = C2IR3';
-inputsRBF2 = [C2IR1t; C2IR2t; C2IR3t];
-inputsMLP2 = [C2IR1, C2IR2, C2IR3];
-% Classifier 1 targets
-targetsMLP2 = xlsread('neural_data.xlsx','BA32:BA101');
-targetsRBF2 = targetsMLP2';
-
-
-
-%% MLP2 %%
-%%%%%%%%%%
-%%
-n = randi([min_n,max_n],1,1);
-iterations = 10;
-
-MLP2Net = generate_mlp(inputsMLP2,targetsMLP2,n);
-%%
-
-
-%% RBF2 %%
-%%%%%%%%%%
-
-MaxNeurons = 50;
-Spread = rand();
-RBF2Net = GenerateRBF(inputsRBF2,targetsRBF2,Spread,MaxNeurons);
-
-
-%% ANFIS 2 %%
-%%%%%%%%%%%%%
-
-% Classifier 2 inputs
-R1T = xlsread('neural_data.xlsx','AA32:AA101');
-R2T = xlsread('neural_data.xlsx','AM32:AM101');
-R3T = xlsread('neural_data.xlsx','AY32:AY101');
-inputsANFIS2 = [R1T R2T R3T];
-
-% Classifier 2 output
-C2OUT = xlsread('neural_data.xlsx','BA32:BA101');
-TrainData = [inputsANFIS2 C2OUT];
-NumMfs = 5;
-MfType = 'gbellmf';
-NumEpochs = 20;
-InputFismat = genfis1(TrainData, NumMfs, MfType);
-[ANFIS2,MseAnfis2] = anfis(TrainData, InputFismat, NumEpochs);
-MinMSEAnfis2 = min(MseAnfis2);
-
-
-
+for i=1:50
+R1L1Pert(i) = randi([0 2],1,1);
+R2L1Pert(i) = randi([0 2],1,1);
+R3L1Pert(i) = randi([0 2],1,1);
+end
 
 %%
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                                                                         %
-%                   Training the systems: Step two.                       %
-%                                                                         %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-                        %% MLP1 & MLP2 %%
-outputMLP1 = MLP1Net(inputsMLP1);
-NewTargetsMLP2 = outputMLP1;
-MLP2Net = train(MLP2Net,inputsMLP2,NewTargetsMLP2);
-
-outputMLP2 = MLP2Net(inputsMLP2);
-NewTargetsMLP1 = outputMLP2;
-MLP1Net = train(MLP1Net,inputsMLP1,NewTargetsMLP1);
-                        
-                        %% RBF1 & RBF2 %%
-                        
-% Unsupervised data (only inputs) --> RFB1 Output ---> Target of RBF2 
-% --> Output of RBF2 --> Target of RBF1
-
-
-outputRBF1 = RBF1Net(inputsRBF1); 
-NewTargetsRBF2 = outputRBF1;
-RBF2Net = train(RBF2Net,inputsRBF2,NewTargetsRBF2); 
-
-outputRBF2 = RBF2Net(inputsRBF2);
-NewTargetsRBF1 = outputRBF2;
-RBF1Net = train(RBF1Net,inputsRBF1,NewTargetsRBF1);
-
-                        %% ANFIS1 & ANFIS2 %%
-
-%Part2 Generating Training Samples
-Output1 = evalfis(inputsANFIS1,ANFIS1);
-Output2 = evalfis(inputsANFIS2,ANFIS2);
-% Training Samples for Classifier 1 are (InputsANFIS1,Output2)
-%Training Samples for Classier 2 are(InputsANFIS2,Output1)
-
-%Now we have to Train Six System with above Training Samples
-%For Classifier 1[Training ANFIS1]
-TrainData = [inputsANFIS1 Output2];
-NumMfs = 5;
-MfType = 'gbellmf';
-NumEpochs = 20;
-InputFismat = genfis1(TrainData, NumMfs, MfType);
-ANFIS1Net = anfis(TrainData, InputFismat, NumEpochs);
-
-% For Classifier 2
-TrainData = [inputsANFIS2 Output1];
-NumMfs = 5;
-MfType = 'gbellmf';
-NumEpochs = 20;
-InputFismat = genfis1(TrainData, NumMfs, MfType);
-ANFIS2Net = anfis(TrainData, InputFismat, NumEpochs);                      
-
-
-                        
-
-%%
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%                                                                         %
-%                   Representation of the chromosome:                     %
-%                                                                         %
-%             |_r_|_MLP1_|_RBF1_|_ANFIS1_|_r_|_MLP2_|_RBF2_|_ANFIS2_|     %
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-Chromo = cell(1,8);
-Chromo{1,1} = randi([1,3],1,1);
-Chromo{1,2} = MLP1Net; % generateMLP
-Chromo{1,3} = RBF1Net; % generateRBF
-Chromo{1,4} = ANFIS1Net; %generateANFIS
-Chromo{1,5} = randi([1,3],1,1);
-Chromo{1,6} = generateMLP2Net; % generateMLP
-Chromo{1,7} = generateRBF2Net; % generateRBF
-Chromo{1,8} = ANFIS2Net; %generateANFIS
-
-% Parameter for each function:
-neurons = randi([MinNeurons,MaxNeurons],1,1); % Number of neurons for MLP
-spread = rand(); % Spread value for RBF
-MembershipFunctions = randi([3,7],1,1); % Number of mem. funct. for ANFIS
-
-
-%% Populate chromosome
-max_n = 15;
-min_n = 6;
-Chromo = generateChromosome(max_n,min_n,inputsMLP1,inputsMLP2,targetsMLP1,...
-    targetsMLP2,inputsRBF1,inputsRBF2,targetsRBF1,targetsRBF2);
-
-
