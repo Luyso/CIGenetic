@@ -69,3 +69,25 @@ subplot(2,2,1), plot(NewF2,NewF3,'o'), title('F2 VS F3');
 subplot(2,2,2), plot(DECPertNewFs(:,2),NewF3,'o'), title('PertF2 VS F3');
 subplot(2,2,3), plot(NewF2,DECPertNewFs(:,3),'o'), title('F2 VS PertF3');
 subplot(2,2,4), plot(DECPertNewFs(:,2),DECPertNewFs(:,3),'o'), title('PertF2 VS PertF3');
+%%
+%Risk Input Perturbation
+R1L1New = xlsread('neural_data.xlsx','R32:R81');
+R1L2New = xlsread('neural_data.xlsx','V32:V81');
+R1L3New = xlsread('neural_data.xlsx','Z32:Z81');
+
+R2L1New = xlsread('neural_data.xlsx','AE32:AE81');
+R2L2New = xlsread('neural_data.xlsx','AI32:AI81');
+R2L3New = xlsread('neural_data.xlsx','AL32:AL81');
+
+R3L1New = xlsread('neural_data.xlsx','AQ32:AQ81');
+R3L2New = xlsread('neural_data.xlsx','AU32:AU81');
+R3L3New = xlsread('neural_data.xlsx','AX32:AX81');
+
+
+for i=1:50
+R1L1Pert(i) = randi([0 2],1,1);
+R2L1Pert(i) = randi([0 2],1,1);
+R3L1Pert(i) = randi([0 2],1,1);
+end
+
+%%
