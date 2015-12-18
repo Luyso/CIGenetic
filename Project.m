@@ -38,12 +38,12 @@ max_n =15;
 min_n = 6;
 mpl_gp = getBest(gen_factors,gen_perc,max_n, min_n)
 
-
+close all
 
                             %%%%%%%%%%%%%%%%
                          %%%%  RISK 1 MLP  %%%%
                             %%%%%%%%%%%%%%%%
-
+%%
 mpl_r1 = getBest(R1Input,R1T,max_n, min_n)
  
 
@@ -107,24 +107,19 @@ MLP1Net = generate_mlp(inputsMLP1,targetsMLP1,n);
 %% new trained net
 Perturbed_inputs = [INCPertNewFs(:,1),NewF2,NewF3,NewF4];
 Union1 = [Perturbed_inputs' gen_factors'];
-Union1 = Union1';
+Union1 = Union1'; % 120x4
 %%
-for i=1:120
-outputsnew(i,1:4) = mpl_gp.net(Union1(i,:));
-end
+
+outputsnew = mpl_gp.net(Union1'); % 1x120
+
 F5 = [NewF5' C1F1'];
 F5 = F5';
 F6 = [NewF6' C1F2'];
 F6 = F6';
-outputsnew = [outputsnew F5 F6]; % 120x4 U 120x2
+outputsnew = [outputsnew' F5 F6]; % 120x1 U 120x2
 %%
-oldData= [gen_factors C1F1 C1F2];
-semifinal = [outputsnew' oldData'];
-semifinal = semifinal'; % 120x6 
-%%
-for i=1:120
-finalOut(i,1:6) = MLP1Net(semifinal(i,:));
-end
+finalOut = MLP1Net(outputsnew');
+
 
 %% RBF1 %%
 %%%%%%%%%%
