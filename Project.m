@@ -110,15 +110,14 @@ Perturbed_inputs = [INCPertNewFs(:,1),NewF2,NewF3,NewF4];
 Union1 = [Perturbed_inputs' gen_factors'];
 Union1 = Union1'; % 120x4
 %%
-
-outputsMLP1new = mpl_gp.net(Union1'); % 1x120
-
+outputsnew = mpl_gp.net(Union1'); % 1x120
 F5 = [NewF5' C1F1'];
 F5 = F5';
 F6 = [NewF6' C1F2'];
 F6 = F6';
-outputsMLP1new = [outputsMLP1new' F5 F6]; % 120x1 U 120x2
-NewTargetMLP1 = MLP1Net(outputsMLP1new'); % 1x120
+outputsnew = [outputsnew' F5 F6]; % 120x1 U 120x2
+%%
+NewTargetMLP1 = MLP1Net(outputsnew'); % 1x120
 
 
 %% RBF1 %%
@@ -130,13 +129,7 @@ RBF1Net = GenerateRBF(inputsRBF1,targetsRBF1,MaxNeurons,Spread);
 
 %% Unsupervised data
 
-outputsRBF1new = mpl_gp.net(Union1'); % 1x120
-F5 = [NewF5' C1F1'];
-F5 = F5';
-F6 = [NewF6' C1F2'];
-F6 = F6';
-outputsRBF1new = [outputsRBF1new' F5 F6]; % 120x1 U 120x2
-NewTargetRBF1 = RBF1Net(outputsRBF1new'); % 1x120
+NewTargetRBF1 = RBF1Net(outputsnew'); % 1x120
 %%
 
 %% ANFIS 1 %%
@@ -152,13 +145,8 @@ InputFismat = genfis1(TrainData, NumMfs, MfType);
 [ANFIS1,MseAnfis1] = anfis(TrainData, InputFismat, NumEpochs);
 MinMSEAnfis1 = min(MseAnfis1);
 %%
-outputsANFIS1new = mpl_gp.net(Union1');
-F5 = [NewF5' C1F1'];
-F5 = F5';
-F6 = [NewF6' C1F2'];
-F6 = F6';
-outputsANFIS1new = [outputsANFIS1new' F5 F6]; % 120x1 U 120x2
-NewTargetsANFIS1 = evalfis(outputsANFIS1new',ANFIS1);
+
+NewTargetsANFIS1 = evalfis(outputsnew',ANFIS1);
 
 %%
                               %%%%%%%%%%%%%%%%%%
