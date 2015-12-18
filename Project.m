@@ -38,7 +38,7 @@ max_n =15;
 min_n = 6;
 mpl_gp = getBest(gen_factors,gen_perc,max_n, min_n)
 
-
+%%
 
                             %%%%%%%%%%%%%%%%
                          %%%%  RISK 1 MLP  %%%%
@@ -49,13 +49,13 @@ mpl_r1 = getBest(R1Input,R1T,max_n, min_n)
 
 
     
-%% 
+ 
                             %%%%%%%%%%%%%%%%
                          %%%%  RISK 2 MLP  %%%%
                             %%%%%%%%%%%%%%%%
 
 mpl_r2 = getBest(R2Input,R2T,max_n, min_n)
-%% 
+
                             %%%%%%%%%%%%%%%%
                          %%%%  RISK 3 MLP  %%%%
                             %%%%%%%%%%%%%%%%
@@ -114,7 +114,7 @@ F6 = [NewF6' C1F2'];
 F6 = F6';
 outputsnew = [outputsnew' F5 F6]; % 120x1 U 120x2
 %%
-NewTargetMLP1 = MLP1Net(outputsnew'); % 1x120
+NewTargetMLP1 = MLP1Net(outputsnew')'; % 1x120
 
 %% RBF1 %%
 %%%%%%%%%%
@@ -125,7 +125,7 @@ RBF1Net = GenerateRBF(inputsRBF1,targetsRBF1,MaxNeurons,Spread);
 
 %% Unsupervised data
 
-NewTargetRBF1 = RBF1Net(outputsnew'); % 1x120
+NewTargetRBF1 = RBF1Net(outputsnew')'; % 1x120
 %%
 
 %% ANFIS 1 %%
@@ -171,6 +171,8 @@ n = randi([min_n,max_n],1,1);
 iterations = 10;
 
 MLP2Net = generate_mlp(inputsMLP2,targetsMLP2,n);
+
+close all;
 %%
 
 
