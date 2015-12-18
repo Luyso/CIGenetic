@@ -95,8 +95,6 @@ targetsRBF1 = targetsRBF1';
 targetsMLP1 = xlsread('neural_data.xlsx','N32:N101');
 targetsANFIS1 = xlsread('neural_data.xlsx','N32:N101');
 
-
-
 %% MLP1 %%
 %%%%%%%%%%
 
@@ -118,7 +116,6 @@ F6 = F6';
 outputsnew = [outputsnew' F5 F6]; % 120x1 U 120x2
 %%
 NewTargetMLP1 = MLP1Net(outputsnew'); % 1x120
-
 
 %% RBF1 %%
 %%%%%%%%%%
@@ -145,7 +142,6 @@ InputFismat = genfis1(TrainData, NumMfs, MfType);
 [ANFIS1,MseAnfis1] = anfis(TrainData, InputFismat, NumEpochs);
 MinMSEAnfis1 = min(MseAnfis1);
 %%
-
 NewTargetsANFIS1 = evalfis(outputsnew',ANFIS1);
 
 %%
