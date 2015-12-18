@@ -253,55 +253,30 @@ C2InputPert = [OutMLPR1 OutMLPR2 OutMLPR3];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
                         %% MLP1 & MLP2 %%
-outputMLP1 = MLP1Net(inputsMLP1);
-NewTargetsMLP2 = outputMLP1;
-MLP2Net = train(MLP2Net,inputsMLP2,NewTargetsMLP2);
 
-outputMLP2 = MLP2Net(inputsMLP2);
-NewTargetsMLP1 = outputMLP2;
-MLP1Net = train(MLP1Net,inputsMLP1,NewTargetsMLP1);
+MLP2Net = train(MLP2Net,C2InputPert',NewTargetMLP1');
+
+MLP1Net = train(MLP1Net,outputsnew,NewTargetMLP2);
                         
                         %% RBF1 & RBF2 %%
                         
 % Unsupervised data (only inputs) --> RFB1 Output ---> Target of RBF2 
 % --> Output of RBF2 --> Target of RBF1
 
+RBF2Net = train(RBF2Net,C2InputPert',NewTargetRBF1'); 
 
-outputRBF1 = RBF1Net(inputsRBF1); 
-NewTargetsRBF2 = outputRBF1;
-RBF2Net = train(RBF2Net,inputsRBF2,NewTargetsRBF2); 
-
-outputRBF2 = RBF2Net(inputsRBF2);
-NewTargetsRBF1 = outputRBF2;
-RBF1Net = train(RBF1Net,inputsRBF1,NewTargetsRBF1);
+RBF1Net = train(RBF1Net,outputsnew',NewTargetRBF2');
 
                         %% ANFIS1 & ANFIS2 %%
 
-%Part2 Generating Training Samples
-Output1 = evalfis(inputsANFIS1,ANFIS1);
-Output2 = evalfis(inputsANFIS2,ANFIS2);
-% Training Samples for Classifier 1 are (InputsANFIS1,Output2)
-%Training Samples for Classier 2 are(InputsANFIS2,Output1)
-
 %Now we have to Train Six System with above Training Samples
 %For Classifier 1[Training ANFIS1]
-TrainData = [inputsANFIS1 Output2];
 NumMfs = 5;
-MfType = 'gbellmf';
 NumEpochs = 20;
-InputFismat = genfis1(TrainData, NumMfs, MfType);
-ANFIS1Net = anfis(TrainData, InputFismat, NumEpochs);
-
+ANFIS1Net = GenerateANFIS(outputsnew,NewTargetANFIS2,NumMfs,NumEpochs);
+%%
 % For Classifier 2
-TrainData = [inputsANFIS2 Output1];
-NumMfs = 5;
-MfType = 'gbellmf';
-NumEpochs = 20;
-InputFismat = genfis1(TrainData, NumMfs, MfType);
-ANFIS2Net = anfis(TrainData, InputFismat, NumEpochs);                      
-
-
-                        
+ANFIS2Net = GenerateANFIS(C2InputPert,NewTargetsANFIS1,NumMfs,NumEpochs);
 
 %%
 
