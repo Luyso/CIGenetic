@@ -103,6 +103,7 @@ targetsANFIS1 = xlsread('neural_data.xlsx','N32:N101');
 n = randi([min_n,max_n],1,1);
 iterations = 10;
 MLP1Net = generate_mlp(inputsMLP1,targetsMLP1,n);
+close all
 
 %% new trained net
 Perturbed_inputs = [INCPertNewFs(:,1),NewF2,NewF3,NewF4];
@@ -110,15 +111,14 @@ Union1 = [Perturbed_inputs' gen_factors'];
 Union1 = Union1'; % 120x4
 %%
 
-outputsnew = mpl_gp.net(Union1'); % 1x120
+outputsMLP1new = mpl_gp.net(Union1'); % 1x120
 
 F5 = [NewF5' C1F1'];
 F5 = F5';
 F6 = [NewF6' C1F2'];
 F6 = F6';
-outputsnew = [outputsnew' F5 F6]; % 120x1 U 120x2
-%%
-finalOut = MLP1Net(outputsnew');
+outputsMLP1new = [outputsMLP1new' F5 F6]; % 120x1 U 120x2
+NewTargetMLP1 = MLP1Net(outputsMLP1new'); % 1x120
 
 
 %% RBF1 %%
@@ -128,6 +128,15 @@ MaxNeurons = 50;
 Spread = 0.5;
 RBF1Net = GenerateRBF(inputsRBF1,targetsRBF1,MaxNeurons,Spread);
 
+%% Unsupervised data
+
+outputsRBF1new = mpl_gp.net(Union1'); % 1x120
+F5 = [NewF5' C1F1'];
+F5 = F5';
+F6 = [NewF6' C1F2'];
+F6 = F6';
+outputsRBF1new = [outputsRBF1new' F5 F6]; % 120x1 U 120x2
+NewTargetRBF1 = RBF1Net(outputsRBF1new'); % 1x120
 %%
 
 %% ANFIS 1 %%
