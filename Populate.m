@@ -33,6 +33,10 @@ targetsANFIS2 = targetsMLP2;
 
 
 %%
+MLP2Net = train(MLP2Net,C2InputPert',NewTargetMLP1');
+
+MLP1Net = train(MLP1Net,InputC1',NewTargetMLP2');
+                        
 
 %% Generate chromosomes
 max_n = 15;
@@ -41,8 +45,16 @@ m = 1;
 Population = cell(1,m);
 
 for i=1:m
-Population{1,i} = generateChromosome(max_n,min_n,inputsMLP1,inputsMLP2,targetsMLP1,...
-    targetsMLP2,inputsRBF1,inputsRBF2,targetsRBF1,targetsRBF2, inputsANFIS1,inputsANFIS2,targetsANFIS1,targetsANFIS2);
+Population{1,i} = generateChromosome(max_n,min_n,...
+    inputsMLP1,InputC1,inputsMLP2,C2InputPert,...
+    targetsMLP1,NewTargetMLP2,targetsMLP2,NewTargetMLP2,...
+    inputsRBF1,inputsRBF2,...
+    targetsRBF1,NewTargetRBF1,targetsRBF2,NewTargetRBF2,...
+    inputsANFIS1,inputsANFIS2,...
+    targetsANFIS1,NewTargetsANFIS1,targetsANFIS2,NewTargetANFIS2);
+
+
 %%disp('Generated Chromosome number', i);
 close all
 end
+close all

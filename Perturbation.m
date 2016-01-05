@@ -11,8 +11,6 @@ NewF6 =  xlsread(filename, 'L32:L81');
 
 NewFs = [NewF1, NewF2, NewF3, NewF4];
 
-
-
 %% Generate new data with a certain perturbation
 
 INCpert = 1 + (1.1-1).*rand(50,4); % Max 10% of perturbation

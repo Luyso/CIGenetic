@@ -112,9 +112,9 @@ F5 = [NewF5' C1F1'];
 F5 = F5';
 F6 = [NewF6' C1F2'];
 F6 = F6';
-outputsnew = [outputsnew' F5 F6]; % 120x1 U 120x2
+InputC1 = [outputsnew' F5 F6]; % 120x1 U 120x2
 %%
-NewTargetMLP1 = MLP1Net(outputsnew')'; % 1x120
+NewTargetMLP1 = MLP1Net(InputC1')'; % 1x120
 
 %% RBF1 %%
 %%%%%%%%%%
@@ -125,7 +125,7 @@ RBF1Net = GenerateRBF(inputsRBF1,targetsRBF1,MaxNeurons,Spread);
 
 %% Unsupervised data
 
-NewTargetRBF1 = RBF1Net(outputsnew')'; % 1x120
+NewTargetRBF1 = RBF1Net(InputC1')'; % 1x120
 %%
 
 %% ANFIS 1 %%
@@ -141,7 +141,7 @@ InputFismat = genfis1(TrainData, NumMfs, MfType);
 [ANFIS1,MseAnfis1] = anfis(TrainData, InputFismat, NumEpochs);
 MinMSEAnfis1 = min(MseAnfis1);
 %%
-NewTargetsANFIS1 = evalfis(outputsnew',ANFIS1);
+NewTargetsANFIS1 = evalfis(InputC1',ANFIS1);
 
 %%
 
@@ -174,7 +174,6 @@ MLP2Net = generate_mlp(inputsMLP2,targetsMLP2,n);
 
 close all;
 %%
-
 
 %% RBF2 %%
 %%%%%%%%%%
@@ -255,8 +254,7 @@ C2InputPert = [OutMLPR1 OutMLPR2 OutMLPR3];
                         %% MLP1 & MLP2 %%
 
 MLP2Net = train(MLP2Net,C2InputPert',NewTargetMLP1');
-
-MLP1Net = train(MLP1Net,outputsnew,NewTargetMLP2);
+MLP1Net = train(MLP1Net,InputC1',NewTargetMLP2');
                         
                         %% RBF1 & RBF2 %%
                         
@@ -265,7 +263,7 @@ MLP1Net = train(MLP1Net,outputsnew,NewTargetMLP2);
 
 RBF2Net = train(RBF2Net,C2InputPert',NewTargetRBF1'); 
 
-RBF1Net = train(RBF1Net,outputsnew',NewTargetRBF2');
+RBF1Net = train(RBF1Net,InputC1',NewTargetRBF2');
 
                         %% ANFIS1 & ANFIS2 %%
 
@@ -273,7 +271,7 @@ RBF1Net = train(RBF1Net,outputsnew',NewTargetRBF2');
 %For Classifier 1[Training ANFIS1]
 NumMfs = 5;
 NumEpochs = 20;
-ANFIS1Net = GenerateANFIS(outputsnew,NewTargetANFIS2,NumMfs,NumEpochs);
+ANFIS1Net = GenerateANFIS(InputC1,NewTargetANFIS2,NumMfs,NumEpochs);
 %%
 % For Classifier 2
 ANFIS2Net = GenerateANFIS(C2InputPert,NewTargetsANFIS1,NumMfs,NumEpochs);
@@ -306,5 +304,9 @@ MembershipFunctions = randi([3,7],1,1); % Number of mem. funct. for ANFIS
 %% Populate chromosome
 max_n = 15;
 min_n = 6;
-Chromo = generateChromosome(max_n,min_n,inputsMLP1,inputsMLP2,targetsMLP1,...
-    targetsMLP2,inputsRBF1,inputsRBF2,targetsRBF1,targetsRBF2);
+Chromo = generateChromosome(max_n,min_n,inputsMLP1,InputC1,inputsMLP2,C2InputPert,...
+    targetsMLP1,NewTargetMLP1,...
+    targetsMLP2,NewTargetMLP2,...
+    inputsRBF1,NewTargetRBF1,...
+    inputsRBF2,NewTargetRBF2,...
+    targetsRBF1,targetsRBF2);
