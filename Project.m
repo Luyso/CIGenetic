@@ -1,3 +1,4 @@
+%%
 filename = 'neural_data.xlsx';
 gen_factors =  xlsread(filename, 'D31:G101');
 gen_perc = xlsread(filename,  'I32:I101');
@@ -133,13 +134,9 @@ NewTargetRBF1 = RBF1Net(InputC1')'; % 1x120
 
 % Classifier 1 output
 
-TrainData = [inputsANFIS1 targetsANFIS1];
 NumMfs = 5;
-MfType = 'gbellmf';
 NumEpochs = 20;
-InputFismat = genfis1(TrainData, NumMfs, MfType);
-[ANFIS1,MseAnfis1] = anfis(TrainData, InputFismat, NumEpochs);
-MinMSEAnfis1 = min(MseAnfis1);
+ANFIS1 = GenerateANFIS(inputsANFIS1,targetsANFIS1,NumMfs,NumEpochs)
 %%
 NewTargetsANFIS1 = evalfis(InputC1',ANFIS1);
 
@@ -194,16 +191,10 @@ inputsANFIS2 = [R1T R2T R3T];
 
 % Classifier 2 output
 C2OUT = xlsread('neural_data.xlsx','BA32:BA101');
-TrainData = [inputsANFIS2 C2OUT];
-NumMfs = 5;
-MfType = 'gbellmf';
 NumEpochs = 20;
-InputFismat = genfis1(TrainData, NumMfs, MfType);
-[ANFIS2,MseAnfis2] = anfis(TrainData, InputFismat, NumEpochs);
-MinMSEAnfis2 = min(MseAnfis2);
-
+ANFIS2 = GenerateANFIS(inputsANFIS2,C2OUT,NumMfs,NumEpochs);
 %%
-% Calculating Outputs of Classifier2 with Perturbed Inputs 
+% Calculating Outputs of Classifier2 with Perturbed Inputs(UnsuperVised Data) 
 R1InputPert = [R1L1Pert' R1L2New R1L3New];
 R2InputPert = [R2L1Pert' R2L2New R2L3New];
 R3InputPert = [R3L1Pert' R3L2New R3L3New];
@@ -275,9 +266,16 @@ ANFIS1Net = GenerateANFIS(InputC1,NewTargetANFIS2,NumMfs,NumEpochs);
 %%
 % For Classifier 2
 ANFIS2Net = GenerateANFIS(C2InputPert,NewTargetsANFIS1,NumMfs,NumEpochs);
+%%
+%%Fitness Function
+TargetC1 = xlsread('neural_data.xlsx','N32:N101');
+InputsC1 = inputsANFIS1;
+InputsC2 = inputsMLP2;
+TargetC2 = xlsread('neural_data.xlsx','BA32:BA101');
+%%
+Score = NN_Fitness(Population,InputsC1,TargetC1,InputsC2,TargetC2);
 
 %%
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                                                         %
 %                   Representation of the chromosome:                     %

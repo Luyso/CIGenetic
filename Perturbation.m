@@ -11,7 +11,28 @@ NewF6 =  xlsread(filename, 'L32:L81');
 
 NewFs = [NewF1, NewF2, NewF3, NewF4];
 
-%% Generate new data with a certain perturbation
+
+%Risk Input Perturbation
+R1L1New = xlsread('neural_data.xlsx','R32:R81');
+R1L2New = xlsread('neural_data.xlsx','V32:V81');
+R1L3New = xlsread('neural_data.xlsx','Z32:Z81');
+
+R2L1New = xlsread('neural_data.xlsx','AE32:AE81');
+R2L2New = xlsread('neural_data.xlsx','AI32:AI81');
+R2L3New = xlsread('neural_data.xlsx','AL32:AL81');
+
+R3L1New = xlsread('neural_data.xlsx','AQ32:AQ81');
+R3L2New = xlsread('neural_data.xlsx','AU32:AU81');
+R3L3New = xlsread('neural_data.xlsx','AX32:AX81');
+
+
+for i=1:50
+R1L1Pert(i) = randi([0 2],1,1);
+R2L1Pert(i) = randi([0 2],1,1);
+R3L1Pert(i) = randi([0 2],1,1);
+end
+
+% Generate new data with a certain perturbation
 
 INCpert = 1 + (1.1-1).*rand(50,4); % Max 10% of perturbation
 DECPert = 0.9 + (1-0.90).*rand(50,4); % Max 20% of perturbation
@@ -67,25 +88,4 @@ subplot(2,2,1), plot(NewF2,NewF3,'o'), title('F2 VS F3');
 subplot(2,2,2), plot(DECPertNewFs(:,2),NewF3,'o'), title('PertF2 VS F3');
 subplot(2,2,3), plot(NewF2,DECPertNewFs(:,3),'o'), title('F2 VS PertF3');
 subplot(2,2,4), plot(DECPertNewFs(:,2),DECPertNewFs(:,3),'o'), title('PertF2 VS PertF3');
-%%
-%Risk Input Perturbation
-R1L1New = xlsread('neural_data.xlsx','R32:R81');
-R1L2New = xlsread('neural_data.xlsx','V32:V81');
-R1L3New = xlsread('neural_data.xlsx','Z32:Z81');
-
-R2L1New = xlsread('neural_data.xlsx','AE32:AE81');
-R2L2New = xlsread('neural_data.xlsx','AI32:AI81');
-R2L3New = xlsread('neural_data.xlsx','AL32:AL81');
-
-R3L1New = xlsread('neural_data.xlsx','AQ32:AQ81');
-R3L2New = xlsread('neural_data.xlsx','AU32:AU81');
-R3L3New = xlsread('neural_data.xlsx','AX32:AX81');
-
-
-for i=1:50
-R1L1Pert(i) = randi([0 2],1,1);
-R2L1Pert(i) = randi([0 2],1,1);
-R3L1Pert(i) = randi([0 2],1,1);
-end
-
 %%
