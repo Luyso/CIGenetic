@@ -1,7 +1,5 @@
 function mutatedPopulation = NN_mutation(parents,options,nvars,FitnessFnc,state,Score,Population,MutationFncArgs)
 
-
-%%
  a = randi([1,3],1,1)
 %%
 prob  = 0.99 + (1.01 - 0.99).*rand();
@@ -26,8 +24,6 @@ if (Population{1,i}.r1 == 2 )
 end
 
 if (Population{1,i}.r1 == 3 )
- 
-    %%
   for k=1:3
       for j=1:5
           Population{1,i}.ANFIS1.input(k).mf(j).params= Population{1,i}.ANFIS1.input(k).mf(j).params .* prob;
@@ -36,10 +32,7 @@ if (Population{1,i}.r1 == 3 )
   for c=1:125
       Population{1,i}.ANFIS1.output.mf(c).params = Population{1,i}.ANFIS1.output.mf(j).params*prob
   end
-      %%
   
-   
-    
 end
   
     

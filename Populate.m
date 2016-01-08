@@ -9,11 +9,11 @@
 %% Generate chromosomes (Estimated time 5*m mins)
 max_n = 15;
 min_n = 6;
-m = 50;
+m = 1;
 Population = cell(1,m);
 
 for i=1:m
-Population{1,i} = generateChromosome(max_n,min_n,...
+Population{i,1} = generateChromosome(max_n,min_n,...
     inputsMLP1,InputC1,inputsMLP2,C2InputPert,...
     targetsMLP1,NewTargetMLP2,targetsMLP2,NewTargetMLP2,...
     inputsRBF1,inputsRBF2,...
@@ -25,6 +25,8 @@ Population{1,i} = generateChromosome(max_n,min_n,...
     fprintf(Text, i);
 
 end
+
+Population = Population';
 
 disp('Population finalized succesfully!');
     

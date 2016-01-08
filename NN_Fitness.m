@@ -1,12 +1,22 @@
-% function fit = fitnes(population)
-function  Score = NN_Fitness(Population,InputsC1,TargetC1,InputsC2,TargetC2)
-%To Calculate the first Objective O1 (MSE)
-PopSize=1;
-Population{1,1}.r1 =3;
+function  Score = NN_Fitness(Population)
 
+C1F1 = xlsread('neural_data.xlsx','K32:K101');
+C1F2 = xlsread('neural_data.xlsx','L32:L101');
+C1GP = xlsread('neural_data.xlsx','I32:I101');
+InputsC1 = [C1F1 C1F2 C1GP];
+TargetC1 = xlsread('neural_data.xlsx','N32:N101');
+C2IR1 = xlsread('neural_data.xlsx','AA32:AA101'); % CLASSIFIER 2 INPUT RISK 1
+C2IR2 = xlsread('neural_data.xlsx','AM32:AM101'); % CLASSIFIER 2 INPUT RISK 2
+C2IR3 = xlsread('neural_data.xlsx','AY32:AY101'); % CLASSIFIER 2 INPUT RISK 3
+InputsC2 = [C2IR1, C2IR2, C2IR3];
+TargetC2 = xlsread('neural_data.xlsx','BA32:BA101');
+PopSize = 50;
+Population = Population';
+%To Calculate the first Objective O1 (MSE)
+disp ('Calculating the first Objective O1');
 for m=1:PopSize
     % MSE for C1 Part
-    if(Population{1,m}.r1 == 1)
+    if(Population{m,1}.r1 == 1)
         OutputsMLP1 = Population{1,m}.MLP1(InputsC1');
         MSE1(1,m) = mse(Population{1,m}.MLP1,TargetC1,OutputsMLP1);
     elseif (Population{1,m}.r1 == 2)
@@ -32,9 +42,9 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%55
 %% ToCalcultae the Second ObjectiveO2 (#of Mismatches)
 %  Classifier 1 output Ranges
-% Low--> 0-0.25  Medium-->0.25-0.75 High-->0.75-1
+% Low--> 0-0.2  Medium-->0.2-0.6 High-->0.6-1
 %  Classifier 2 output Ranges
-% Low--> 0-0.4  Medium-->0.4-0.8 High-->0.8-1
+% Low--> 0-0.18  Medium-->0.18-0.45 High-->0.45-1
 %A mismatch occurs if for the same input sample C1 Range is different from
 %C2 Range
 
@@ -63,16 +73,16 @@ outputsC1
     % Finding # of mismatches now
     mismatch=0;
 for i=1:length(outputsC1)
-        if (outputsC1(1,i) <= 0.25)
-            if(outputsC2(1,i)< 0.0 || outputsC2(1,i) > 0.4) 
+        if (outputsC1(1,i) <= 0.2)
+            if(outputsC2(1,i)< 0.0 || outputsC2(1,i) > 0.18) 
                 mismatch= mismatch+1;
             end
-        elseif (outputsC1(1,i) > 0.25) && (outputsC1(1,i) <= 0.75)
-            if(outputsC2(1,i)< 0.4 || outputsC2(1,i) > 0.8) 
+        elseif (outputsC1(1,i) > 0.2) && (outputsC1(1,i) <= 0.6)
+            if(outputsC2(1,i)< 0.18 || outputsC2(1,i) > 0.45) 
                 mismatch= mismatch+1;
             end
-        elseif (outputsC1(1,i) > 0.75)
-            if(outputsC2(1,i)< 0.8) 
+        elseif (outputsC1(1,i) > 0.6)
+            if(outputsC2(1,i)< 0.45) 
                 mismatch= mismatch+1;
             end
     end

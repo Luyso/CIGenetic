@@ -32,11 +32,12 @@ C1GPT = C1GP';
 inputsRBF1 = [C1F1T; C1F2T; C1GPT];
 inputsMLP1 = [C1F1, C1F2, C1GP];
 inputsANFIS1 = [C1F1 C1F2 C1GP];
+InputsC1 = inputsANFIS1;
 % Classifier 1 targets
-targetsRBF1 = xlsread('neural_data.xlsx','N32:N101');
-targetsRBF1 = targetsRBF1';
 targetsMLP1 = xlsread('neural_data.xlsx','N32:N101');
-targetsANFIS1 = xlsread('neural_data.xlsx','N32:N101');
+targetsRBF1 = targetsMLP1';
+targetsANFIS1 = targetsMLP1;
+TargetC1 = targetsMLP1;
 % Classifier 2 inputs
 C2IR1 = xlsread('neural_data.xlsx','AA32:AA101'); % CLASSIFIER 2 INPUT RISK 1
 C2IR2 = xlsread('neural_data.xlsx','AM32:AM101'); % CLASSIFIER 2 INPUT RISK 2
@@ -46,18 +47,23 @@ C2IR2t = C2IR2';
 C2IR3t = C2IR3';
 inputsRBF2 = [C2IR1t; C2IR2t; C2IR3t];
 inputsMLP2 = [C2IR1, C2IR2, C2IR3];
+InputsC2 = inputsMLP2;
 % Classifier 2 targets
 targetsMLP2 = xlsread('neural_data.xlsx','BA32:BA101');
 targetsRBF2 = targetsMLP2';
 targetsANFIS2 = targetsMLP2;
+TargetC2 = targetsMLP2;
 % Classifier 2 inputs
 R1T = xlsread('neural_data.xlsx','AA32:AA101');
 R2T = xlsread('neural_data.xlsx','AM32:AM101');
 R3T = xlsread('neural_data.xlsx','AY32:AY101');
 inputsANFIS2 = [R1T R2T R3T];
-
 % Classifier 2 output
 C2OUT = xlsread('neural_data.xlsx','BA32:BA101');
+
+
+
+
 %%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                                                         %
@@ -186,14 +192,11 @@ ANFIS2Net = GenerateANFIS(C2InputPert,NewTargetsANFIS1,NumMfs,NumEpochs);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%
 
-% Fitness Function
-TargetC1 = xlsread('neural_data.xlsx','N32:N101');
-InputsC1 = inputsANFIS1;
-InputsC2 = inputsMLP2;
-TargetC2 = xlsread('neural_data.xlsx','BA32:BA101');
-%
-Score = NN_Fitness(Population,InputsC1,TargetC1,InputsC2,TargetC2);
+% Fitness Function % 
 
+Score = NN_Fitness(Population);
+
+%plot((1:1:1),Score(2,:),'+')
 %%
 % Parameter for each function:
 neurons = randi([MinNeurons,MaxNeurons],1,1); % Number of neurons for MLP
@@ -210,11 +213,11 @@ j=1;
 k=1;
 l=1;
 for i=1:70
-if (Pairs(i,1)>0.52) 
+if (Pairs(i,1)>0.6) 
     AHigh(j,:) = Pairs(i,:);
     j = j+1;
 
-    elseif (Pairs(i,1)<=0.3) 
+    elseif (Pairs(i,1)<=0.2) 
     ALow(k,:) = Pairs(i,:);
     k = k+1;
     
@@ -224,6 +227,8 @@ if (Pairs(i,1)>0.52)
         
 end
 end
+%%
+plot(AHigh(:,1),AHigh(:,2),'+')
 
 min(AHigh(:,2))
 max(ALow(:,2))
