@@ -1,7 +1,7 @@
 
 *.m~
 
-*.mat
+matlab.mat
 
 PerturbationBACK.m
 
