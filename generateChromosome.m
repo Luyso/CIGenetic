@@ -39,14 +39,17 @@ RBF1 = train(RBF1,pertInC1',NewTargetRBF2);
 NumMfs = randi([3,7],1,1);
 NumEpochs = 20;
 
-ANFIS1 = GenerateANFIS(inANFIS1,tarANFIS1,NumMfs,NumEpochs);
-ANFIS2 = GenerateANFIS(inANFIS1,tarANFIS1,NumMfs,NumEpochs);
+[InputFismat1,ANFIS1] = GenerateANFIS(inANFIS1,tarANFIS1,NumMfs,NumEpochs);
+[InputFismat2,ANFIS2] = GenerateANFIS(inANFIS2,tarANFIS2,NumMfs,NumEpochs);
 
 NewTargetANFIS2 = evalfis(pertInC1',ANFIS1);
 NewTargetANFIS1 = evalfis(pertInC2',ANFIS2);
 
-ANFIS1 = GenerateANFIS(pertInC1,NewTargetANFIS1,NumMfs,NumEpochs);
-ANFIS2 = GenerateANFIS(pertInC2,NewTargetANFIS2,NumMfs,NumEpochs);
+TrainData1 = [pertInC1 NewTargetANFIS1];
+TrainData2 = [pertInC2 NewTargetANFIS2];
+
+ANFIS1 = anfis(TrainData1,InputFismat1,NumEpochs);
+ANFIS2 = anfis(TrainData2,InputFismat2,NumEpochs);
 %%
 
 Chromosome = struct;

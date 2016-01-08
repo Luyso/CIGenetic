@@ -13,7 +13,7 @@ TargetC2 = xlsread('neural_data.xlsx','BA32:BA101');
 PopSize = 50;
 Population = Population';
 %To Calculate the first Objective O1 (MSE)
-disp ('Calculating the first Objective O1');
+disp ('Calculating the first Objective (MSE)');
 for m=1:PopSize
     % MSE for C1 Part
     if(Population{m,1}.r1 == 1)
@@ -47,7 +47,7 @@ end
 % Low--> 0-0.18  Medium-->0.18-0.45 High-->0.45-1
 %A mismatch occurs if for the same input sample C1 Range is different from
 %C2 Range
-
+disp ('Calculating the second Objective (Missmatch)');
 for m=1:PopSize
     if (Population{1,m}.r1 == 1)
         outputsC1 = Population{1,m}.MLP1(InputsC1');
