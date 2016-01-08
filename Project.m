@@ -153,6 +153,7 @@ ANFIS2 = GenerateANFIS(inputsANFIS2,C2OUT,NumMfs,NumEpochs);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %                                                                         %
 %                   Training the systems: Step two.                       %
+
 %             First of all, Perturbation.m file must be run               %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -178,9 +179,14 @@ NumEpochs = 20;
 ANFIS1Net = GenerateANFIS(InputC1,NewTargetANFIS2,NumMfs,NumEpochs);
 ANFIS2Net = GenerateANFIS(C2InputPert,NewTargetsANFIS1,NumMfs,NumEpochs);
 
+%% At this point generate the new population %%
 
 
-%% Fitness Function
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%
+
+% Fitness Function
 TargetC1 = xlsread('neural_data.xlsx','N32:N101');
 InputsC1 = inputsANFIS1;
 InputsC2 = inputsMLP2;
